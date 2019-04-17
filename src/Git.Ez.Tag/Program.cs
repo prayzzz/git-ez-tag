@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using LibGit2Sharp;
 
@@ -9,7 +8,7 @@ namespace Git.Ez.Tag
     {
         private const string InitialRepositoryPath = ".";
 
-        private static void Main(string[] args)
+        private static void Main()
         {
             Console.WriteLine($"Current Directory is '{Directory.GetCurrentDirectory()}'.");
 
@@ -30,14 +29,13 @@ namespace Git.Ez.Tag
 
             using (var repository = new Repository(repositoryPath))
             {
-                var git = new Git();
-                if (git.IsDirty(repository))
+                if (Git.IsDirty(repository))
                 {
                     Console.Write("Working Directory is dirty. Commit your changes before tagging.");
                     Environment.Exit(1);
                 }
 
-                var latestTag = git.GetLatestTag(repository);
+                var latestTag = Git.GetLatestTag(repository);
                 if (latestTag == null)
                 {
                     Console.WriteLine("No Tag available");
