@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
+using System.Reflection;
 using LibGit2Sharp;
 
 namespace Git.Ez.Tag
@@ -11,7 +11,9 @@ namespace Git.Ez.Tag
 
         private static void Main()
         {
-            Console.WriteLine($"Current Directory is '{Directory.GetCurrentDirectory()}'.");
+            var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Git.Ez.Tag.Resources.Banner.txt")).ReadToEnd();
+            Console.WriteLine(banner);
+            Console.WriteLine();
 
             var repositoryPath = Repository.Discover(InitialRepositoryPath);
             if (repositoryPath == null)
@@ -51,14 +53,15 @@ namespace Git.Ez.Tag
                     nextTagSuggestion = new SemVersion(semver.Major, semver.Minor + 1, semver.Patch).ToString();
                 }
 
-                Console.WriteLine($"Next Tag [{nextTagSuggestion}]:");
+                Console.Write($"Next Tag [{nextTagSuggestion}]: ");
                 var nextTag = Console.ReadLine();
                 if (string.IsNullOrEmpty(nextTag))
                 {
                     nextTag = nextTagSuggestion;
                 }
-                
-                Console.WriteLine($"Next tag will be {nextTag}");
+
+                Console.Write($"Annotation for new Tag {nextTag}: ");
+                var annotation = Console.ReadLine();
             }
         }
     }
