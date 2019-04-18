@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using LibGit2Sharp;
 
@@ -36,14 +37,28 @@ namespace Git.Ez.Tag
                 }
 
                 var latestTag = Git.GetLatestTag(repository);
+                var nextTagSuggestion = "";
                 if (latestTag == null)
                 {
+                    nextTagSuggestion = "1.0.0";
                     Console.WriteLine("No Tag available");
                 }
                 else
                 {
                     Console.WriteLine($"Latest Tag '{latestTag}'");
+
+                    var semver = SemVersion.Parse(latestTag);
+                    nextTagSuggestion = new SemVersion(semver.Major, semver.Minor + 1, semver.Patch).ToString();
                 }
+
+                Console.WriteLine($"Next Tag [{nextTagSuggestion}]:");
+                var nextTag = Console.ReadLine();
+                if (string.IsNullOrEmpty(nextTag))
+                {
+                    nextTag = nextTagSuggestion;
+                }
+                
+                Console.WriteLine($"Next tag will be {nextTag}");
             }
         }
     }
