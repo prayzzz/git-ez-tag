@@ -1,5 +1,5 @@
 using System;
-using LibGit2Sharp;
+using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -7,7 +7,7 @@ namespace Git.Ez.Tag.Services
 {
     public class NextTagService
     {
-        private const string TagPrompt = "What's your next Tag?";
+        private const string TagPrompt = "> What's your next Tag?";
         private readonly Git _git;
 
         private readonly ILogger<NextTagService> _logger;
@@ -18,7 +18,7 @@ namespace Git.Ez.Tag.Services
             _git = git;
         }
 
-        public string GetNextTag(Repository repository, SemVerElement semVerElement)
+        public string GetNextTag(DirectoryInfo repository, SemVerElement semVerElement)
         {
             var latestTag = _git.GetLatestTag(repository);
             if (latestTag == null)
@@ -27,7 +27,7 @@ namespace Git.Ez.Tag.Services
                 return Prompt.GetString(TagPrompt, "1.0.0");
             }
 
-            _logger.LogInformation($"Latest Tag is {latestTag}");
+            _logger.LogInformation($"Latest Tag is '{latestTag}'");
 
             if (SemanticVersion.TryParse(latestTag, out var semver))
             {

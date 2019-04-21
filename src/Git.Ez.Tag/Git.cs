@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
-using LibGit2Sharp;
+using System.IO;
 using Microsoft.Extensions.Logging;
 
 namespace Git.Ez.Tag
@@ -15,69 +13,83 @@ namespace Git.Ez.Tag
             _logger = logger;
         }
 
-        public bool IsDirty(Repository repository)
+        public bool IsDirty(DirectoryInfo repository)
         {
-            return repository.Diff.Compare<TreeChanges>(repository.Head.Tip.Tree, DiffTargets.Index | DiffTargets.WorkingDirectory).Any();
+            var (isClean, _, _) = RunGit("diff --no-ext-diff --quiet --exit-code", repository);
+            return !isClean;
         }
 
-        public string GetLatestTag(Repository repository)
+        public string GetLatestTag(DirectoryInfo repository)
         {
-            try
+            var (isSuccess, stdOut, stdError) = RunGit("describe --abbrev=0", repository);
+            if (isSuccess)
             {
-                return repository.Describe(repository.Head.Tip);
-            }
-            catch (LibGit2SharpException)
-            {
-                return null;
-            }
-        }
-
-        public void AddTag(string tagName, string annotation)
-        {
-            if (string.IsNullOrEmpty(annotation))
-            {
-                RunGit($"tag {tagName}");
+                return stdOut;
             }
             else
             {
-                RunGit($"tag -a {tagName} -m {annotation}");
+                _logger.LogError($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
+                return "1.0.0";
             }
         }
 
-        public void Push(string repositoryPath)
+        public void AddTag(DirectoryInfo repository, string tagName, string annotation)
         {
-            var result = RunGit("push --tags", repositoryPath);
-            if (!result)
+            var (isSuccess, _, stdError) = AddTagInternal(repository, tagName, annotation);
+            if (!isSuccess)
             {
-                _logger.LogError("Command 'git push --tags' failed");
+                _logger.LogError($"Couldn't add Tag: '{stdError.GetFirstLine()}'");
             }
         }
 
-        private bool RunGit(string arguments, string workingDirectory = ".")
+        private (bool IsSuccess, string StdOut, string StdError) AddTagInternal(DirectoryInfo repository, string tagName, string annotation)
+        {
+            if (string.IsNullOrEmpty(annotation))
+            {
+                return RunGit($"tag {tagName}", repository);
+            }
+            else
+            {
+                return RunGit($"tag -a {tagName} -m {annotation}", repository);
+            }
+        }
+
+        public void Push(DirectoryInfo repository)
+        {
+            var (isSuccess, _, stdError) = RunGit("push --tags", repository);
+            if (!isSuccess)
+            {
+                _logger.LogError($"Couldn't push Tags: '{stdError.GetFirstLine()}'");
+            }
+        }
+        
+        private (bool IsSuccess, string StdOut, string StdError) RunGit(string arguments, DirectoryInfo workingDirectory)
         {
             _logger.LogDebug($"Executing 'git {arguments}'");
             var processStartInfo = new ProcessStartInfo("git", arguments)
             {
-                WorkingDirectory = workingDirectory
+                WorkingDirectory = workingDirectory.ToString(),
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
             };
 
             var process = Process.Start(processStartInfo);
             if (process == null)
             {
                 _logger.LogError("Couldn't start Git process.");
-                return false;
+                return (false, string.Empty, string.Empty);
             }
 
             process.WaitForExit();
             if (process.ExitCode == 0)
             {
                 _logger.LogDebug($"Execution of 'git {arguments}' successful");
-                return true;
+                return (true, process.StandardOutput.ReadToEnd().Trim(), string.Empty);
             }
             else
             {
                 _logger.LogDebug($"Execution of 'git {arguments}' failed");
-                return false;
+                return (false, string.Empty, process.StandardError.ReadToEnd());
             }
         }
     }

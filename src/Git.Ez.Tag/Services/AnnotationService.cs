@@ -15,7 +15,7 @@ namespace Git.Ez.Tag.Services
 
         public string GetAnnotation(string nextTag)
         {
-            return Prompt.GetString($"What's your annotation for Tag '{nextTag}'?", nextTag);
+            return Prompt.GetString($"> What's your annotation for Tag '{nextTag}'?", nextTag);
         }
     }
 }

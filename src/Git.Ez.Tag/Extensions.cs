@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Git.Ez.Tag
@@ -13,6 +14,11 @@ namespace Git.Ez.Tag
             }
 
             return null;
+        }
+
+        public static string GetFirstLine(this string str)
+        {
+            return new StringReader(str).ReadLine();
         }
     }
 }

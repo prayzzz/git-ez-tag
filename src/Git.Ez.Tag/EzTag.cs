@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Git.Ez.Tag.Services;
-using LibGit2Sharp;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +19,7 @@ namespace Git.Ez.Tag
 
     internal class EzTag
     {
-        private const string InitialRepositoryPath = ".";
+        private static readonly DirectoryInfo InitialRepositoryPath = new DirectoryInfo(".");
         private readonly AnnotationService _annotationService;
         private readonly Git _git;
 
@@ -34,7 +34,7 @@ namespace Git.Ez.Tag
             _annotationService = annotationService;
         }
 
-        [Option("-p|--push", "Executes 'git push --tags' after creating the Tag", CommandOptionType.NoValue)]
+        [Option("-p|--push", "Executes 'git push --tags' after adding the Tag", CommandOptionType.NoValue)]
         public bool IsAutoPush { get; set; }
 
         [Option("-i|--increase", "Auto increase the given part of the version", CommandOptionType.SingleValue, ValueName = "Major|Minor|Patch")]
@@ -43,6 +43,24 @@ namespace Git.Ez.Tag
         [Option("-l|--lightweight", "Skip Tag annotation", CommandOptionType.NoValue)]
         public bool IsLightWeight { get; set; }
 
+        private static DirectoryInfo DiscoverGitDir(DirectoryInfo currentDirectory)
+        {
+            while (true)
+            {
+                if (currentDirectory.GetDirectories().Any(d => d.Name == ".git"))
+                {
+                    return currentDirectory;
+                }
+
+                if (currentDirectory.Parent == null)
+                {
+                    return null;
+                }
+
+                currentDirectory = currentDirectory.Parent;
+            }
+        }
+
         private Task OnExecuteAsync()
         {
             var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Git.Ez.Tag.Resources.Banner.txt")).ReadToEnd();
@@ -50,44 +68,35 @@ namespace Git.Ez.Tag
             Console.WriteLine(banner);
             Console.WriteLine();
 
-            var repositoryPath = Repository.Discover(InitialRepositoryPath);
-            if (repositoryPath == null)
+            var repositoryDirectory = DiscoverGitDir(InitialRepositoryPath);
+            if (repositoryDirectory == null)
             {
                 _logger.LogInformation("No Git repository found.");
                 return Task.CompletedTask;
             }
 
-            _logger.LogInformation($"Found Repository at '{repositoryPath}'.");
+            _logger.LogInformation($"Found Repository at '{repositoryDirectory}'.");
 
-            if (!Repository.IsValid(repositoryPath))
+            if (_git.IsDirty(repositoryDirectory))
             {
-                _logger.LogError("Current Directory is not a Git Repository.");
+                _logger.LogError("Working Directory is dirty. Commit your changes before tagging.");
                 return Task.CompletedTask;
             }
 
-            using (var repository = new Repository(repositoryPath))
+            var tagName = _nextTagService.GetNextTag(repositoryDirectory, SemVerElement);
+            var annotation = string.Empty;
+
+            if (!IsLightWeight)
             {
-                if (_git.IsDirty(repository))
-                {
-                    _logger.LogError("Working Directory is dirty. Commit your changes before tagging.");
-                    return Task.CompletedTask;
-                }
+                annotation = _annotationService.GetAnnotation(tagName);
+            }
 
-                var tagName = _nextTagService.GetNextTag(repository, SemVerElement);
-                var annotation = string.Empty;
+            _git.AddTag(repositoryDirectory, tagName, annotation);
+            _logger.LogInformation($"Added tag '{tagName}'");
 
-                if (!IsLightWeight)
-                {
-                    annotation = _annotationService.GetAnnotation(tagName);
-                }
-
-                _git.AddTag(tagName, annotation);
-                _logger.LogInformation($"Added tag '{tagName}'");
-
-                if (IsAutoPush || Prompt.GetYesNo("Push Tags?", true))
-                {
-                    _git.Push(repositoryPath);
-                }
+            if (IsAutoPush || Prompt.GetYesNo("> Push Tags?", true))
+            {
+                _git.Push(repositoryDirectory);
             }
 
             return Task.CompletedTask;
