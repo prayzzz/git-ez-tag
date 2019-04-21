@@ -18,7 +18,7 @@ namespace Git.Ez.Tag.Services
             _git = git;
         }
 
-        public string GetNextTag(DirectoryInfo repository, SemVerElement semVerElement)
+        public string GetNextTag(DirectoryInfo repository, SemanticVersionElement semanticVersionElement)
         {
             var latestTag = _git.GetLatestTag(repository);
             if (latestTag == null)
@@ -31,20 +31,20 @@ namespace Git.Ez.Tag.Services
 
             if (SemanticVersion.TryParse(latestTag, out var semver))
             {
-                switch (semVerElement)
+                switch (semanticVersionElement)
                 {
-                    case SemVerElement.None:
+                    case SemanticVersionElement.None:
                         var next = semver.Minor.HasValue
-                                       ? semver.Increase(SemVerElement.Minor).ToString()
-                                       : semver.Increase(SemVerElement.Major).ToString();
+                                       ? semver.Increase(SemanticVersionElement.Minor).ToString()
+                                       : semver.Increase(SemanticVersionElement.Major).ToString();
 
                         return Prompt.GetString(TagPrompt, next);
-                    case SemVerElement.Major:
-                    case SemVerElement.Minor:
-                    case SemVerElement.Patch:
-                        return semver.Increase(semVerElement).ToString();
+                    case SemanticVersionElement.Major:
+                    case SemanticVersionElement.Minor:
+                    case SemanticVersionElement.Patch:
+                        return semver.Increase(semanticVersionElement).ToString();
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(semVerElement), semVerElement, null);
+                        throw new ArgumentOutOfRangeException(nameof(semanticVersionElement), semanticVersionElement, null);
                 }
             }
 

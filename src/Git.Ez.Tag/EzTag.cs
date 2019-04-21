@@ -9,14 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Git.Ez.Tag
 {
-    public enum SemVerElement
-    {
-        None = 0,
-        Major,
-        Minor,
-        Patch
-    }
-
+    [Command("ez-tag")]
     internal class EzTag
     {
         private static readonly DirectoryInfo InitialRepositoryPath = new DirectoryInfo(".");
@@ -38,7 +31,7 @@ namespace Git.Ez.Tag
         public bool IsAutoPush { get; set; }
 
         [Option("-i|--increase", "Auto increase the given part of the version", CommandOptionType.SingleValue, ValueName = "Major|Minor|Patch")]
-        public SemVerElement SemVerElement { get; set; }
+        public SemanticVersionElement SemanticVersionElement { get; set; }
 
         [Option("-l|--lightweight", "Skip Tag annotation", CommandOptionType.NoValue)]
         public bool IsLightWeight { get; set; }
@@ -47,7 +40,7 @@ namespace Git.Ez.Tag
         {
             while (true)
             {
-                if (currentDirectory.GetDirectories().Any(d => d.Name == ".git"))
+                if (currentDirectory.EnumerateDirectories().Any(d => d.Name == ".git"))
                 {
                     return currentDirectory;
                 }
@@ -61,6 +54,7 @@ namespace Git.Ez.Tag
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
         private Task OnExecuteAsync()
         {
             var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Git.Ez.Tag.Resources.Banner.txt")).ReadToEnd();
@@ -83,7 +77,7 @@ namespace Git.Ez.Tag
                 return Task.CompletedTask;
             }
 
-            var tagName = _nextTagService.GetNextTag(repositoryDirectory, SemVerElement);
+            var tagName = _nextTagService.GetNextTag(repositoryDirectory, SemanticVersionElement);
             var annotation = string.Empty;
 
             if (!IsLightWeight)

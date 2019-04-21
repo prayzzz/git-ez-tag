@@ -3,6 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace Git.Ez.Tag
 {
+    public enum SemanticVersionElement
+    {
+        None = 0,
+        Major,
+        Minor,
+        Patch
+    }
+
     /// <summary>
     ///     Supports only Major, Minor and Patch element.
     /// </summary>
@@ -41,19 +49,19 @@ namespace Git.Ez.Tag
             return true;
         }
 
-        public SemanticVersion Increase(SemVerElement semVerElement)
+        public SemanticVersion Increase(SemanticVersionElement semanticVersionElement)
         {
-            switch (semVerElement)
+            switch (semanticVersionElement)
             {
-                case SemVerElement.None:
+                case SemanticVersionElement.None:
                     return this;
-                case SemVerElement.Major:
+                case SemanticVersionElement.Major:
                     return new SemanticVersion(
                         Major + 1,
                         Minor.HasValue ? (int?) 0 : null,
                         Patch.HasValue ? (int?) 0 : null
                     );
-                case SemVerElement.Minor:
+                case SemanticVersionElement.Minor:
                     if (Minor.HasValue)
                     {
                         return new SemanticVersion(
@@ -64,9 +72,9 @@ namespace Git.Ez.Tag
                     }
                     else
                     {
-                        throw new ArgumentException($"Can't increase version {semVerElement}");
+                        throw new ArgumentException($"Can't increase version {semanticVersionElement}");
                     }
-                case SemVerElement.Patch:
+                case SemanticVersionElement.Patch:
                     if (Patch.HasValue)
                     {
                         return new SemanticVersion(
@@ -77,10 +85,10 @@ namespace Git.Ez.Tag
                     }
                     else
                     {
-                        throw new ArgumentException($"Can't increase version {semVerElement}");
+                        throw new ArgumentException($"Can't increase version {semanticVersionElement}");
                     }
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(semVerElement), semVerElement, null);
+                    throw new ArgumentOutOfRangeException(nameof(semanticVersionElement), semanticVersionElement, null);
             }
         }
 
