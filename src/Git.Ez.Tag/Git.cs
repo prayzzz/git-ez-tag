@@ -29,7 +29,7 @@ namespace Git.Ez.Tag
             else
             {
                 _logger.LogError($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
-                return "1.0.0";
+                return null;
             }
         }
 
