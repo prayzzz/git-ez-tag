@@ -3,4 +3,6 @@
 [Bb]in/
 [Oo]bj/
 
+nupkg/
+
 *.DotSettings.user

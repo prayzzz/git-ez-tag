@@ -23,7 +23,7 @@ namespace Git.Ez.Tag.Services
             var latestTag = _git.GetLatestTag(repository);
             if (latestTag == null)
             {
-                _logger.LogDebug("No Tag found.");
+                _logger.LogInformation("Repository doesn't contain any Tags.");
                 return Prompt.GetString(TagPrompt, "1.0.0");
             }
 

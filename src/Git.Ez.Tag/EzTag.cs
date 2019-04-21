@@ -69,7 +69,7 @@ namespace Git.Ez.Tag
                 return Task.CompletedTask;
             }
 
-            _logger.LogInformation($"Found Repository at '{repositoryDirectory}'.");
+            _logger.LogInformation($"Found Repository at '{repositoryDirectory.FullName}'.");
 
             if (_git.IsDirty(repositoryDirectory))
             {
