@@ -12,18 +12,18 @@ namespace Git.Ez.Tag
     [Command("ez-tag")]
     internal class EzTag
     {
-        private static readonly DirectoryInfo InitialRepositoryPath = new DirectoryInfo(".");
+        private static readonly DirectoryInfo InitialRepositoryPath = new DirectoryInfo(Directory.GetCurrentDirectory());
         private readonly AnnotationService _annotationService;
         private readonly Git _git;
 
         private readonly ILogger<EzTag> _logger;
-        private readonly NextTagService _nextTagService;
+        private readonly TagService _tagService;
 
-        public EzTag(ILogger<EzTag> logger, Git git, NextTagService nextTagService, AnnotationService annotationService)
+        public EzTag(ILogger<EzTag> logger, Git git, TagService tagService, AnnotationService annotationService)
         {
             _logger = logger;
             _git = git;
-            _nextTagService = nextTagService;
+            _tagService = tagService;
             _annotationService = annotationService;
         }
 
@@ -77,9 +77,10 @@ namespace Git.Ez.Tag
                 return Task.CompletedTask;
             }
 
-            var tagName = _nextTagService.GetNextTag(repositoryDirectory, SemanticVersionElement);
-            var annotation = string.Empty;
+            var tagName = _tagService.GetAndIncrementTag(repositoryDirectory, SemanticVersionElement);
+            _logger.LogInformation($"New Tag will be '{tagName}'");
 
+            var annotation = string.Empty;
             if (!IsLightWeight)
             {
                 annotation = _annotationService.GetAnnotation(tagName);
@@ -88,9 +89,9 @@ namespace Git.Ez.Tag
             _git.AddTag(repositoryDirectory, tagName, annotation);
             _logger.LogInformation($"Added tag '{tagName}'");
 
-            if (IsAutoPush || Prompt.GetYesNo("> Push Tags?", true))
+            if (IsAutoPush || Prompt.GetYesNo($"> Push Tag '{tagName}' now?", true))
             {
-                _git.Push(repositoryDirectory);
+                _git.PushTag(repositoryDirectory, tagName);
             }
 
             return Task.CompletedTask;

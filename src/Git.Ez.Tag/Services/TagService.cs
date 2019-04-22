@@ -5,20 +5,20 @@ using Microsoft.Extensions.Logging;
 
 namespace Git.Ez.Tag.Services
 {
-    public class NextTagService
+    public class TagService
     {
         private const string TagPrompt = "> What's your next Tag?";
         private readonly Git _git;
 
-        private readonly ILogger<NextTagService> _logger;
+        private readonly ILogger<TagService> _logger;
 
-        public NextTagService(ILogger<NextTagService> logger, Git git)
+        public TagService(ILogger<TagService> logger, Git git)
         {
             _logger = logger;
             _git = git;
         }
 
-        public string GetNextTag(DirectoryInfo repository, SemanticVersionElement semanticVersionElement)
+        public string GetAndIncrementTag(DirectoryInfo repository, SemanticVersionElement semanticVersionElement)
         {
             var latestTag = _git.GetLatestTag(repository);
             if (latestTag == null)

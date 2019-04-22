@@ -23,12 +23,15 @@ Based on your latest Tag, it suggest your next one with an increased **minor** e
 
 ```
 $ ez-tag
-[Information] Found Repository at 'C:\Development\MyProject'.
-[Information] Latest Tag is '1.1.0'
+[INFO] Found Repository at 'C:\Development\MyProject'.
+[INFO] Latest Tag is '1.1.0'
 > What's your next Tag? [1.2.0]
-> What's your annotation for Tag '1.2.0'? [1.2.0]
-[Information] Added tag '1.2.0'
-> Push Tags? [Y/n]
+[INFO] New Tag is '1.2.0'
+> What's your message for Tag '1.2.0'? [1.2.0]
+[INFO] Added tag '1.2.0'
+> Push Tag '1.2.0' now? [Y/n]
+[INFO] Pushed 'refs/tags/1.2.0' to origin
+
 ```
 
 ## Used Git commands
@@ -38,7 +41,7 @@ Here's a list of the used Git commands.
 
 Is the repository dirty?
 ```
-diff --no-ext-diff --quiet --exit-code
+git diff --no-ext-diff --quiet --exit-code
 ```
 
 Get the latest Tag.
@@ -46,17 +49,17 @@ Get the latest Tag.
 git describe --abbrev=0
 ```
 
-Add lightwight Tag
+Add lightwight Tag.
 ```
 git tag TAGNAME
 ```
 
-Add annotated Tag
+Add annotated Tag.
 ```
 git tag -a TAGNAME -m ANNOTATION
 ```
 
-Push Tags
+Push added Tag.
 ```
-git push --tags
+git push -u origin refs/tags/TAGNAME
 ```

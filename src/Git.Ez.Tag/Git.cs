@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace Git.Ez.Tag
@@ -54,15 +56,20 @@ namespace Git.Ez.Tag
             }
         }
 
-        public void Push(DirectoryInfo repository)
+        public void PushTag(DirectoryInfo repository, string tagName)
         {
-            var (isSuccess, _, stdError) = RunGit("push --tags", repository);
-            if (!isSuccess)
+            var tagRef = $"refs/tags/{tagName}";
+            var (isSuccess, stdOut, stdError) = RunGit($"push -u origin {tagRef}", repository);
+            if (isSuccess)
+            {
+                _logger.LogInformation($"Pushed '{tagRef}' to origin");
+            }
+            else
             {
                 _logger.LogError($"Couldn't push Tags: '{stdError.GetFirstLine()}'");
             }
         }
-        
+
         private (bool IsSuccess, string StdOut, string StdError) RunGit(string arguments, DirectoryInfo workingDirectory)
         {
             _logger.LogDebug($"Executing 'git {arguments}'");
@@ -84,12 +91,12 @@ namespace Git.Ez.Tag
             if (process.ExitCode == 0)
             {
                 _logger.LogDebug($"Execution of 'git {arguments}' successful");
-                return (true, process.StandardOutput.ReadToEnd().Trim(), string.Empty);
+                return (true, process.StandardOutput.ReadToEnd().Trim(), process.StandardError.ReadToEnd().Trim());
             }
             else
             {
                 _logger.LogDebug($"Execution of 'git {arguments}' failed");
-                return (false, string.Empty, process.StandardError.ReadToEnd());
+                return (false, process.StandardOutput.ReadToEnd().Trim(), process.StandardError.ReadToEnd().Trim());
             }
         }
     }

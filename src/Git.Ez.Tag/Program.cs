@@ -26,23 +26,17 @@ namespace Git.Ez.Tag
                                  src.Path = "appsettings.json";
                              });
                          })
-                         .ConfigureLogging((context, builder) =>
-                         {
-                             builder.AddConsole();
-                             builder.AddConfiguration(context.Configuration.GetSection("Logging"));
-                         })
                          .ConfigureServices((context, services) =>
                          {
                              services.AddSingleton<Git>();
                              services.AddSingleton<EzTag>();
-                             services.AddSingleton<NextTagService>();
+                             services.AddSingleton<TagService>();
                              services.AddSingleton<AnnotationService>();
                          })
                          .UseSerilog((context, configuration) =>
                          {
-                             configuration.MinimumLevel.Debug();
-                             configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Information);
-                             configuration.WriteTo.Console(outputTemplate: "[{Level}] {Message:lj}{NewLine}{Exception}");
+                             configuration.MinimumLevel.Information();
+                             configuration.WriteTo.Console(outputTemplate: "[{Level:u4}] {Message:lj}{NewLine}{Exception}");
                          })
                          .RunCommandLineApplicationAsync<EzTag>(args);
         }
