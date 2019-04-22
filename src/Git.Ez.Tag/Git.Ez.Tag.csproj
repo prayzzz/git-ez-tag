@@ -7,7 +7,7 @@
 
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>ez-tag</ToolCommandName>
-        <PackageOutputPath>./nupkg</PackageOutputPath>
+        <PackageOutputPath>../../nupkg</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
