@@ -12,16 +12,29 @@ Options:
   -?|-h|--help                       Show help information
 ```
 
-# What does it?
+## What does it?
 
 This dotnet global tool implements an opinionated way of adding and pushing Git Tags.
 Based on your latest Tag, it suggest your next one with an increased **minor** element*.
 
 \* This only works, if your latest Tag matches the simplified semantic versioning pattern of `Major.Minor.Patch`
 
-# Used Git commands
+## Usage
+
+```
+$ ez-tag
+[Information] Found Repository at 'C:\Development\MyProject'.
+[Information] Latest Tag is '1.1.0'
+> What's your next Tag? [1.2.0]
+> What's your annotation for Tag '1.2.0'? [1.2.0]
+[Information] Added tag '1.2.0'
+> Push Tags? [Y/n]
+```
+
+## Used Git commands
 Here's a list of the used Git commands.
 **Don't** use this tool, if they don't fit your workflow.
+
 
 Is the repository dirty?
 ```
