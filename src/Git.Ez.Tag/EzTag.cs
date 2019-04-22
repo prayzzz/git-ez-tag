@@ -65,7 +65,7 @@ namespace Git.Ez.Tag
             var repositoryDirectory = DiscoverGitDir(InitialRepositoryPath);
             if (repositoryDirectory == null)
             {
-                _logger.LogInformation("No Git repository found.");
+                _logger.LogError("No Git repository found.");
                 return Task.CompletedTask;
             }
 
