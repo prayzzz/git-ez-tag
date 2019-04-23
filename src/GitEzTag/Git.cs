@@ -53,7 +53,7 @@ namespace GitEzTag
         public void PushTag(DirectoryInfo repository, string tagName)
         {
             var tagRef = $"refs/tags/{tagName}";
-            var (isSuccess, stdOut, stdError) = RunGit($"push -u origin {tagRef}", repository);
+            var (isSuccess, _, stdError) = RunGit($"push -u origin {tagRef}", repository);
             if (isSuccess)
             {
                 _logger.LogInformation($"Pushed '{tagRef}' to origin");
