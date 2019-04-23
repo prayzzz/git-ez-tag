@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A85A2704-A4FA-4E51-8C99-FC04223BB1FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Git.Ez.Tag", "src\Git.Ez.Tag\Git.Ez.Tag.csproj", "{6E202DE9-27CD-4633-8EFC-63C2994FFF92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitEzTag", "src\GitEzTag\GitEzTag.csproj", "{6E202DE9-27CD-4633-8EFC-63C2994FFF92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

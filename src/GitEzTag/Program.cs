@@ -1,16 +1,14 @@
 using System.IO;
 using System.Threading.Tasks;
-using Git.Ez.Tag.Services;
+using GitEzTag.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
 
-namespace Git.Ez.Tag
+namespace GitEzTag
 {
     internal static class Program
     {
@@ -22,7 +20,7 @@ namespace Git.Ez.Tag
                              builder.SetBasePath(Directory.GetCurrentDirectory());
                              builder.Add<JsonConfigurationSource>(src =>
                              {
-                                 src.FileProvider = new EmbeddedFileProvider(typeof(Program).Assembly, "Git.Ez.Tag");
+                                 src.FileProvider = new EmbeddedFileProvider(typeof(Program).Assembly, "GitEzTag");
                                  src.Path = "appsettings.json";
                              });
                          })

@@ -1,10 +1,8 @@
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Git.Ez.Tag
+namespace GitEzTag
 {
     public class Git
     {
@@ -28,11 +26,9 @@ namespace Git.Ez.Tag
             {
                 return stdOut;
             }
-            else
-            {
-                _logger.LogError($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
-                return null;
-            }
+
+            _logger.LogError($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
+            return null;
         }
 
         public void AddTag(DirectoryInfo repository, string tagName, string annotation)
@@ -50,10 +46,8 @@ namespace Git.Ez.Tag
             {
                 return RunGit($"tag {tagName}", repository);
             }
-            else
-            {
-                return RunGit($"tag -a {tagName} -m {annotation}", repository);
-            }
+
+            return RunGit($"tag -a {tagName} -m {annotation}", repository);
         }
 
         public void PushTag(DirectoryInfo repository, string tagName)
@@ -93,11 +87,9 @@ namespace Git.Ez.Tag
                 _logger.LogDebug($"Execution of 'git {arguments}' successful");
                 return (true, process.StandardOutput.ReadToEnd().Trim(), process.StandardError.ReadToEnd().Trim());
             }
-            else
-            {
-                _logger.LogDebug($"Execution of 'git {arguments}' failed");
-                return (false, process.StandardOutput.ReadToEnd().Trim(), process.StandardError.ReadToEnd().Trim());
-            }
+
+            _logger.LogDebug($"Execution of 'git {arguments}' failed");
+            return (false, process.StandardOutput.ReadToEnd().Trim(), process.StandardError.ReadToEnd().Trim());
         }
     }
 }

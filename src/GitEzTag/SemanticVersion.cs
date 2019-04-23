@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Git.Ez.Tag
+namespace GitEzTag
 {
     public enum SemanticVersionElement
     {
@@ -17,7 +17,7 @@ namespace Git.Ez.Tag
     public class SemanticVersion
     {
         private static readonly Regex ParseEx = new Regex(@"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$",
-                                                          RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+            RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
         public SemanticVersion(int major, int? minor, int? patch)
         {

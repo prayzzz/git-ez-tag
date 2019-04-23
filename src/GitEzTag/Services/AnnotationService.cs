@@ -1,8 +1,7 @@
-using System;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
-namespace Git.Ez.Tag.Services
+namespace GitEzTag.Services
 {
     public class AnnotationService
     {

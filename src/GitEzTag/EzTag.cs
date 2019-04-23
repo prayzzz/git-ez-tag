@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Git.Ez.Tag.Services;
+using GitEzTag.Services;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
-namespace Git.Ez.Tag
+namespace GitEzTag
 {
     [Command("ez-tag")]
     internal class EzTag
@@ -57,7 +57,7 @@ namespace Git.Ez.Tag
         // ReSharper disable once UnusedMember.Local
         private Task OnExecuteAsync()
         {
-            var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Git.Ez.Tag.Resources.Banner.txt")).ReadToEnd();
+            var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("GitEzTag.Resources.Banner.txt")).ReadToEnd();
             Console.WriteLine();
             Console.WriteLine(banner);
             Console.WriteLine();

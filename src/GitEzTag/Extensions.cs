@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Git.Ez.Tag
+namespace GitEzTag
 {
     public static class Extensions
     {

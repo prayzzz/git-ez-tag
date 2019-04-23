@@ -3,7 +3,7 @@ using System.IO;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 
-namespace Git.Ez.Tag.Services
+namespace GitEzTag.Services
 {
     public class TagService
     {
@@ -35,8 +35,8 @@ namespace Git.Ez.Tag.Services
                 {
                     case SemanticVersionElement.None:
                         var next = semver.Minor.HasValue
-                                       ? semver.Increase(SemanticVersionElement.Minor).ToString()
-                                       : semver.Increase(SemanticVersionElement.Major).ToString();
+                            ? semver.Increase(SemanticVersionElement.Minor).ToString()
+                            : semver.Increase(SemanticVersionElement.Major).ToString();
 
                         return Prompt.GetString(TagPrompt, next);
                     case SemanticVersionElement.Major:
