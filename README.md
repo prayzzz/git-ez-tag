@@ -7,13 +7,7 @@ Interactive CLI Tool for adding and pushing Git Tags easily.
 _This tool is currently under development. Name, options and behavior are suspect to change._
 
 ```
-Usage: ez-tag [options]
-
-Options:
-  -p|--push                          Pushes the added Tag
-  -i|--increase <Major|Minor|Patch>  Auto increase the given part of the version
-  -l|--lightweight                   Skip Tag annotation
-  -?|-h|--help                       Show help information
+dotnet tool install --global GitEzTag
 ```
 
 ## What does it?
@@ -25,6 +19,18 @@ Also, the name of the Tag is suggested as message, because it's required for ann
 \* This only works, if your latest Tag matches the simplified semantic versioning pattern of `Major.Minor.Patch`
 
 ## Usage
+
+```
+Usage: ez-tag [options]
+
+Options:
+  -p|--push                          Pushes the added Tag
+  -i|--increase <Major|Minor|Patch>  Auto increase the given part of the version
+  -l|--lightweight                   Skip Tag annotation
+  -?|-h|--help                       Show help information
+```
+
+**Sample Output**
 
 ```
 $ ez-tag
