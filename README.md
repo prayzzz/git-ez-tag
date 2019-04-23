@@ -1,6 +1,6 @@
 # git-ez-tag
 
-https://img.shields.io/nuget/v/GitEzTag.svg?style=flat-square
+![Nuget](https://img.shields.io/nuget/v/GitEzTag.svg?style=flat-square)
 
 Interactive CLI Tool for adding and pushing Git Tags easily.
 
