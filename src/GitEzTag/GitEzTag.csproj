@@ -23,6 +23,26 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\*.*" />
         <EmbeddedResource Include="appsettings.json" />
+        <None Include="../../LICENSE" Pack="true" PackagePath="$(PackageLicenseFile)"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <Product>GitEzTag</Product>
+        <Description>Interactive CLI Tool for adding and pushing Git Tags easily.</Description>
+        <Copyright>Copyright (c) prayzzz &amp; Contributors</Copyright>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>$(Product)</PackageId>
+        <Title>$(Product)</Title>
+        <Authors>prayzzz &amp; Contributors</Authors>
+        <PackageLicense>LICENSE</PackageLicense>
+        <PackageDescription>$(Description)</PackageDescription>
+        <PackageVersion>$(Version)</PackageVersion>
+        <PackageTags>Git Tag CLI Easy</PackageTags>
+
+        <PackageProjectUrl>https://github.com/prayzzz/git-ez-tag</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/prayzzz/git-ez-tag</RepositoryUrl>
+    </PropertyGroup>
 
 </Project>
