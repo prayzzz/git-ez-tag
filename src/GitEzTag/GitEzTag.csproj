@@ -4,9 +4,6 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <LangVersion>latest</LangVersion>
-
-        <PackAsTool>true</PackAsTool>
-        <ToolCommandName>ez-tag</ToolCommandName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,6 +33,9 @@
         <Title>$(Product)</Title>
         <Authors>prayzzz &amp; Contributors</Authors>
 
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>ez-tag</ToolCommandName>
+        
         <PackageDescription>$(Description)</PackageDescription>
         <PackageTags>Git Tag CLI Easy</PackageTags>
         <PackageVersion>$(Version)</PackageVersion>                
