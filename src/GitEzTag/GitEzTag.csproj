@@ -7,7 +7,6 @@
 
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>ez-tag</ToolCommandName>
-        <PackageOutputPath>../../nupkg</PackageOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,13 +35,16 @@
         <PackageId>$(Product)</PackageId>
         <Title>$(Product)</Title>
         <Authors>prayzzz &amp; Contributors</Authors>
-        <PackageLicense>LICENSE</PackageLicense>
-        <PackageDescription>$(Description)</PackageDescription>
-        <PackageVersion>$(Version)</PackageVersion>
-        <PackageTags>Git Tag CLI Easy</PackageTags>
 
+        <PackageDescription>$(Description)</PackageDescription>
+        <PackageTags>Git Tag CLI Easy</PackageTags>
+        <PackageVersion>$(Version)</PackageVersion>                
         <PackageProjectUrl>https://github.com/prayzzz/git-ez-tag</PackageProjectUrl>
+        <PackageLicense>LICENSE</PackageLicense>
+        <PackageOutputPath>../../nupkg</PackageOutputPath>
+        
         <RepositoryUrl>https://github.com/prayzzz/git-ez-tag</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>        
     </PropertyGroup>
 
 </Project>
