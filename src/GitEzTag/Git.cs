@@ -22,30 +22,21 @@ namespace GitEzTag
         public string GetLatestTag(DirectoryInfo repository)
         {
             var (isSuccess, stdOut, stdError) = RunGit("describe --abbrev=0", repository);
-            if (isSuccess)
-            {
-                return stdOut;
-            }
+            if (isSuccess) return stdOut;
 
-            _logger.LogError($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
+            _logger.LogWarning($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
             return null;
         }
 
         public void AddTag(DirectoryInfo repository, string tagName, string annotation)
         {
             var (isSuccess, _, stdError) = AddTagInternal(repository, tagName, annotation);
-            if (!isSuccess)
-            {
-                _logger.LogError($"Couldn't add Tag: '{stdError.GetFirstLine()}'");
-            }
+            if (!isSuccess) _logger.LogError($"Couldn't add Tag: '{stdError.GetFirstLine()}'");
         }
 
         private (bool IsSuccess, string StdOut, string StdError) AddTagInternal(DirectoryInfo repository, string tagName, string annotation)
         {
-            if (string.IsNullOrEmpty(annotation))
-            {
-                return RunGit($"tag {tagName}", repository);
-            }
+            if (string.IsNullOrEmpty(annotation)) return RunGit($"tag {tagName}", repository);
 
             return RunGit($"tag -a {tagName} -m {annotation}", repository);
         }
@@ -55,13 +46,9 @@ namespace GitEzTag
             var tagRef = $"refs/tags/{tagName}";
             var (isSuccess, _, stdError) = RunGit($"push -u origin {tagRef}", repository);
             if (isSuccess)
-            {
                 _logger.LogInformation($"Pushed '{tagRef}' to origin");
-            }
             else
-            {
                 _logger.LogError($"Couldn't push Tags: '{stdError.GetFirstLine()}'");
-            }
         }
 
         private (bool IsSuccess, string StdOut, string StdError) RunGit(string arguments, DirectoryInfo workingDirectory)
