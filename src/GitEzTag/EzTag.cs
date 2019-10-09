@@ -110,9 +110,12 @@ namespace GitEzTag
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        ///     Cancellation request is set asynchronous. Wait a short amount of time before checking the Token.
+        /// </summary>
         private static void ThrowIfCancellationRequested(CancellationToken ct)
         {
-            Thread.Sleep(100);
+            Thread.Sleep(10);
             ct.ThrowIfCancellationRequested();
         }
     }
