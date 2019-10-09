@@ -103,7 +103,6 @@ namespace GitEzTag
             if (IsAutoPush || Prompt.GetYesNo($"> Push Tag '{tagName}' now?", true))
             {
                 ThrowIfCancellationRequested(ct);
-
                 _git.PushTag(repositoryDirectory, tagName);
             }
 
