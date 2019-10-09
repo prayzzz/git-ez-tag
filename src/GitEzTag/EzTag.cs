@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using GitEzTag.Services;
 using McMaster.Extensions.CommandLineUtils;
@@ -14,14 +15,16 @@ namespace GitEzTag
     {
         private static readonly DirectoryInfo InitialRepositoryPath = new DirectoryInfo(Directory.GetCurrentDirectory());
         private readonly AnnotationService _annotationService;
+        private readonly IConsole _console;
         private readonly Git _git;
 
         private readonly ILogger<EzTag> _logger;
         private readonly TagService _tagService;
 
-        public EzTag(ILogger<EzTag> logger, Git git, TagService tagService, AnnotationService annotationService)
+        public EzTag(ILogger<EzTag> logger, IConsole console, Git git, TagService tagService, AnnotationService annotationService)
         {
             _logger = logger;
+            _console = console;
             _git = git;
             _tagService = tagService;
             _annotationService = annotationService;
@@ -40,27 +43,34 @@ namespace GitEzTag
         {
             while (true)
             {
-                if (currentDirectory.EnumerateDirectories().Any(d => d.Name == ".git"))
-                {
-                    return currentDirectory;
-                }
+                if (currentDirectory.EnumerateDirectories().Any(d => d.Name == ".git")) return currentDirectory;
 
-                if (currentDirectory.Parent == null)
-                {
-                    return null;
-                }
+                if (currentDirectory.Parent == null) return null;
 
                 currentDirectory = currentDirectory.Parent;
             }
         }
 
         // ReSharper disable once UnusedMember.Local
-        private Task OnExecuteAsync()
+        private Task OnExecuteAsync(CancellationToken ct)
+        {
+            try
+            {
+                return Execute(ct);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private Task Execute(CancellationToken ct)
         {
             var banner = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("GitEzTag.Resources.Banner.txt")).ReadToEnd();
-            Console.WriteLine();
-            Console.WriteLine(banner);
-            Console.WriteLine();
+            _console.WriteLine();
+            _console.WriteLine(banner);
+            _console.WriteLine();
 
             var repositoryDirectory = DiscoverGitDir(InitialRepositoryPath);
             if (repositoryDirectory == null)
@@ -78,23 +88,32 @@ namespace GitEzTag
             }
 
             var tagName = _tagService.GetAndIncrementTag(repositoryDirectory, SemanticVersionElement);
+            ThrowIfCancellationRequested(ct);
+
             _logger.LogInformation($"New Tag will be '{tagName}'");
 
             var annotation = string.Empty;
-            if (!IsLightWeight)
-            {
-                annotation = _annotationService.GetAnnotation(tagName);
-            }
+            if (!IsLightWeight) annotation = _annotationService.GetAnnotation(tagName);
+
+            ThrowIfCancellationRequested(ct);
 
             _git.AddTag(repositoryDirectory, tagName, annotation);
             _logger.LogInformation($"Added tag '{tagName}'");
 
             if (IsAutoPush || Prompt.GetYesNo($"> Push Tag '{tagName}' now?", true))
             {
+                ThrowIfCancellationRequested(ct);
+
                 _git.PushTag(repositoryDirectory, tagName);
             }
 
             return Task.CompletedTask;
+        }
+
+        private static void ThrowIfCancellationRequested(CancellationToken ct)
+        {
+            Thread.Sleep(100);
+            ct.ThrowIfCancellationRequested();
         }
     }
 }
