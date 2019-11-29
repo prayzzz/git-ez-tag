@@ -21,7 +21,7 @@ namespace GitEzTag
 
         public string GetLatestTag(DirectoryInfo repository)
         {
-            var (isSuccess, stdOut, stdError) = RunGit("describe --abbrev=0", repository);
+            var (isSuccess, stdOut, stdError) = RunGit("describe --tags --abbrev=0", repository);
             if (isSuccess) return stdOut;
 
             _logger.LogWarning($"Couldn't get latest Tag: '{stdError.GetFirstLine()}'");
